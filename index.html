@@ -44,12 +44,39 @@
 
     <script>
       function cleanText() {
+        const fillerWords = [
+          "\\bMm-Hmm\\b",
+          "\\bum\\b",
+          "\\buh\\b",
+          "\\b<affirmative>\\b",
+          "\\bUh\\b",
+          "\\bUm\\b",
+          "\\b<laughter>\\b",
+          "\\bHmm\\b",
+          "\\b<laugh>\\b",
+        ];
+
         const originalText = document.getElementById("originalText").value;
-        const cleanedText = originalText.replace(
-          /Speaker (?:[1-9]|10)\s+\d{2}:\d{2}:\d{2}/g,
+
+        // Remove "Speaker X HH:MM:SS" lines
+        let cleanedText = originalText.replace(
+          /Speaker [0-9]+\s+\d{2}:\d{2}:\d{2}/g,
           ""
         );
-        document.getElementById("cleanedText").value = cleanedText.trim();
+
+        // Remove filler words
+        fillerWords.forEach((filler) => {
+          const fillerPattern = new RegExp(filler, "gi");
+          cleanedText = cleanedText
+            .replace(fillerPattern, "")
+            .replace(/\s{2,}/g, " ")
+            .trim();
+        });
+
+        // Ensure no extra spaces remain
+        cleanedText = cleanedText.replace(/^\s+|\s+$/g, "");
+
+        document.getElementById("cleanedText").value = cleanedText;
       }
 
       function copyText() {
