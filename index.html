@@ -48,12 +48,13 @@
           "\\bMm-Hmm\\b",
           "\\bum\\b",
           "\\buh\\b",
-          "\\b<affirmative>\\b",
+          "\\baffirmative\\b",
           "\\bUh\\b",
           "\\bUm\\b",
-          "\\b<laughter>\\b",
+          "\\binaudible\\b",
           "\\bHmm\\b",
-          "\\b<laugh>\\b",
+          "\\blaugh\\b",
+          "\\b', ,'\\b",
         ];
 
         const originalText = document.getElementById("originalText").value;
@@ -72,6 +73,12 @@
             .replace(/\s{2,}/g, " ")
             .trim();
         });
+
+        // Remove double commas
+        cleanedText = cleanedText.replace(/,,+/g, ",");
+
+        // Remove repeated words that follow each other
+        cleanedText = cleanedText.replace(/\b(\w+)\b(?=\s+\1\b)/gi, "");
 
         // Ensure no extra spaces remain
         cleanedText = cleanedText.replace(/^\s+|\s+$/g, "");
