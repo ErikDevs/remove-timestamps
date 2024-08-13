@@ -99,6 +99,8 @@
 
         // Remove double commas
         cleanedText = cleanedText.replace(/,\s*,+/g, "");
+        // Remove double periods, even if separated by spaces
+        cleanedText = cleanedText.replace(/(\.\s*){2,}/g, ".");
 
         // Remove any instance of "<...>"
         cleanedText = cleanedText.replace(/<[^>]*>/g, "");
@@ -128,7 +130,6 @@
         const cleanedText = document.getElementById("cleanedText");
         cleanedText.select();
         document.execCommand("copy");
-        alert("Cleaned text copied to clipboard!");
       }
     </script>
   </body>
