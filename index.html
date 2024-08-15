@@ -122,9 +122,24 @@
         cleanedText = cleanedText.replace(/^\s+|\s+$/g, "");
 
         document.getElementById("cleanedText").value = cleanedText;
-
-        document.getElementById("cleanedText").value = cleanedText;
       }
+
+      function emptyTextArea() {
+        document
+          .getElementById("originalText")
+          .addEventListener("paste", function () {
+            // Set the time interval (in milliseconds) after which the textarea will be cleared
+            const timeInterval = 600000; // 5 seconds
+
+            // Clear the textarea after the specified time interval
+            setTimeout(() => {
+              document.getElementById("originalText").value = "";
+              document.getElementById("cleanedText").value = "";
+            }, timeInterval);
+          });
+      }
+
+      emptyTextArea();
 
       function copyText() {
         const cleanedText = document.getElementById("cleanedText");
