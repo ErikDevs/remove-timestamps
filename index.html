@@ -57,6 +57,7 @@
         class=""
         id="originalText"
         placeholder="Paste your text here..."
+        autofocus
       ></textarea>
       <button onclick="cleanText()">Clean Text</button>
     </div>
@@ -101,14 +102,11 @@
         cleanedText = cleanedText.replace(/,\s*,+/g, "");
         // Remove double periods, even if separated by spaces
         cleanedText = cleanedText.replace(/(\.\s*){2,}/g, ".");
-
         // Remove any instance of "<...>"
         cleanedText = cleanedText.replace(/<[^>]*>/g, "");
-
         // Remove commas before or after a period or question mark
         cleanedText = cleanedText.replace(/\s*,\s*([.?])/g, "$1");
         cleanedText = cleanedText.replace(/([.?])\s*,\s*/g, "$1");
-
         // Ensure a space after each period or question mark and capitalize the first letter after them
         cleanedText = cleanedText.replace(/([.?])([a-zA-Z])/g, "$1 $2");
         cleanedText = cleanedText.replace(
@@ -130,7 +128,6 @@
           .addEventListener("paste", function () {
             // Set the time interval (in milliseconds) after which the textarea will be cleared
             const timeInterval = 300000; // 5 seconds
-
             // Clear the textarea after the specified time interval
             setTimeout(() => {
               document.getElementById("originalText").value = "";
