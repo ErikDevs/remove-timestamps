@@ -77,25 +77,38 @@
       function removeDuplicates(text) {
         // Split the text into sentences using regex to match punctuation marks (., !, ?)
         let sentences = text.split(/(?<=[.!?])\s+/);
-
-        // Use a Set to track unique sentences
-        let uniqueSentences = new Set();
         let resultSentences = [];
 
         sentences.forEach((sentence) => {
-          // Remove duplicate words within the sentence
-          let words = sentence.split(/\s+/);
-          let uniqueWords = new Set(words);
-          let cleanedSentence = Array.from(uniqueWords).join(" ");
+          // Split the sentence into clauses based on commas or semicolons
+          let clauses = sentence.split(/[,;]\s*/);
+          let cleanedClauses = [];
 
-          // Check if the cleaned sentence is unique
-          if (!uniqueSentences.has(cleanedSentence)) {
-            uniqueSentences.add(cleanedSentence);
-            resultSentences.push(cleanedSentence);
-          }
+          clauses.forEach((clause) => {
+            // Split the clause into words
+            let words = clause.split(/\s+/);
+            let cleanedWords = [];
+            let wordSet = new Set();
+
+            // Remove duplicate words within the clause
+            words.forEach((word) => {
+              if (!wordSet.has(word)) {
+                wordSet.add(word);
+                cleanedWords.push(word);
+              }
+            });
+
+            // Reconstruct the clause from cleaned words
+            let cleanedClause = cleanedWords.join(" ");
+            cleanedClauses.push(cleanedClause);
+          });
+
+          // Reconstruct the sentence from cleaned clauses
+          let cleanedSentence = cleanedClauses.join(", ");
+          resultSentences.push(cleanedSentence);
         });
 
-        // Join the unique sentences back into a single text string
+        // Join the cleaned sentences back into a single text string
         return resultSentences.join(" ");
       }
 
