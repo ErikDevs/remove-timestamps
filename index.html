@@ -8,7 +8,6 @@
       type="image/x-icon"
       href="images/check-badge-svgrepo-com.svg"
     />
-
     <title>Text Cleaner</title>
     <style>
       body {
@@ -37,6 +36,8 @@
         margin-top: 20px;
         padding: 10px;
         font-size: 14px;
+        overflow-y: auto; /* Allow scrolling if text overflows */
+        border: 1px solid #ddd;
       }
 
       textarea {
@@ -47,6 +48,10 @@
         padding: 10px 20px;
         font-size: 16px;
         cursor: pointer;
+      }
+
+      .text-content {
+        white-space: pre-wrap; /* Preserve whitespace and line breaks */
       }
     </style>
   </head>
@@ -64,11 +69,36 @@
 
     <div class="cleaned-text">
       <h2>Cleaned Text</h2>
-      <textarea id="cleanedText" readonly></textarea>
+      <div id="cleanedText" class="text-content"></div>
       <button onclick="copyText()">Copy to Clipboard</button>
     </div>
 
     <script>
+      function removeDuplicates(text) {
+        // Split the text into sentences using regex to match punctuation marks (., !, ?)
+        let sentences = text.split(/(?<=[.!?])\s+/);
+
+        // Use a Set to track unique sentences
+        let uniqueSentences = new Set();
+        let resultSentences = [];
+
+        sentences.forEach((sentence) => {
+          // Remove duplicate words within the sentence
+          let words = sentence.split(/\s+/);
+          let uniqueWords = new Set(words);
+          let cleanedSentence = Array.from(uniqueWords).join(" ");
+
+          // Check if the cleaned sentence is unique
+          if (!uniqueSentences.has(cleanedSentence)) {
+            uniqueSentences.add(cleanedSentence);
+            resultSentences.push(cleanedSentence);
+          }
+        });
+
+        // Join the unique sentences back into a single text string
+        return resultSentences.join(" ");
+      }
+
       function cleanText() {
         const fillerWords = [
           "\\bMm-Hmm\\b",
@@ -79,47 +109,73 @@
           "\\bHmm\\b",
           "\\byou know\\b",
           "\\bI mean\\b",
+          "\\bkind of\\b",
+          "\\bMm\\b",
+          "\\buhuh\\b",
+          "\\beh\\b",
         ];
 
-        const originalText = document.getElementById("originalText").value;
+        let originalText = document.getElementById("originalText").value;
 
-        // Remove "Speaker X HH:MM:SS" lines
-        let cleanedText = originalText.replace(
-          /Speaker [0-9]+\s+\d{2}:\d{2}:\d{2}/g,
-          ""
+        // Split text by each speaker section
+        let speakerSections = originalText.split(
+          /(?=Speaker [0-9]+\s+\d{2}:\d{2}:\d{2})/
         );
 
-        // Remove filler words
-        fillerWords.forEach((filler) => {
-          const fillerPattern = new RegExp(filler, "gi");
-          cleanedText = cleanedText
-            .replace(fillerPattern, "")
-            .replace(/\s{2,}/g, " ")
-            .trim();
+        let cleanedSections = speakerSections.map((section) => {
+          // Remove the speaker's timestamp
+          let cleanedSection = section.replace(
+            /Speaker [0-9]+\s+\d{2}:\d{2}:\d{2}/g,
+            "\n"
+          );
+
+          // Remove filler words
+          fillerWords.forEach((filler) => {
+            const fillerPattern = new RegExp(filler, "gi");
+            cleanedSection = cleanedSection
+              .replace(fillerPattern, "")
+              .replace(/\s{2,}/g, " ")
+              .trim();
+          });
+
+          // Remove double commas
+          cleanedSection = cleanedSection.replace(/,\s*,+/g, "");
+          // Remove double periods, even if separated by spaces
+          cleanedSection = cleanedSection.replace(/(\.\s*){2,}/g, ".");
+          // Remove any instance of "<...>"
+          cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
+          // Remove commas before or after a period or question mark
+          cleanedSection = cleanedSection.replace(/\s*,\s*([.?])/g, "$1");
+          cleanedSection = cleanedSection.replace(/([.?])\s*,\s*/g, "$1");
+          // Remove commas with no text before them
+          cleanedSection = cleanedSection.replace(/\s*,/g, "");
+
+          // Capitalize the first letter after a period or question mark, including if it has symbols
+          cleanedSection = cleanedSection.replace(
+            /([.!?])\s*(['"]?)([a-z])/g,
+            (match, p1, p2, p3) => {
+              return p1 + " " + p2 + p3.toUpperCase();
+            }
+          );
+
+          // Ensure a space after each period or question mark and capitalize the first letter after them
+          cleanedSection = cleanedSection.replace(/([.?])([a-zA-Z])/g, "$1 $2");
+          cleanedSection = cleanedSection.replace(
+            /(?:^|[.!?]\s+)([a-z])/g,
+            (match, p1) => {
+              return match.replace(p1, p1.toUpperCase());
+            }
+          );
+
+          // Remove duplicate words, clauses, and sentences
+          return removeDuplicates(cleanedSection);
         });
 
-        // Remove double commas
-        cleanedText = cleanedText.replace(/,\s*,+/g, "");
-        // Remove double periods, even if separated by spaces
-        cleanedText = cleanedText.replace(/(\.\s*){2,}/g, ".");
-        // Remove any instance of "<...>"
-        cleanedText = cleanedText.replace(/<[^>]*>/g, "");
-        // Remove commas before or after a period or question mark
-        cleanedText = cleanedText.replace(/\s*,\s*([.?])/g, "$1");
-        cleanedText = cleanedText.replace(/([.?])\s*,\s*/g, "$1");
-        // Ensure a space after each period or question mark and capitalize the first letter after them
-        cleanedText = cleanedText.replace(/([.?])([a-zA-Z])/g, "$1 $2");
-        cleanedText = cleanedText.replace(
-          /(?:^|[.!?]\s+)([a-z])/g,
-          (match, p1) => {
-            return match.replace(p1, p1.toUpperCase());
-          }
-        );
+        // Combine cleaned sections with a line break between them
+        let finalText = cleanedSections.join("\n\n");
 
-        // Ensure no extra spaces remain
-        cleanedText = cleanedText.replace(/^\s+|\s+$/g, "");
-
-        document.getElementById("cleanedText").value = cleanedText;
+        // Display cleaned text in a div with proper line breaks
+        document.getElementById("cleanedText").innerText = finalText.trim();
       }
 
       function emptyTextArea() {
@@ -127,11 +183,11 @@
           .getElementById("originalText")
           .addEventListener("paste", function () {
             // Set the time interval (in milliseconds) after which the textarea will be cleared
-            const timeInterval = 300000; // 5 seconds
+            const timeInterval = 300000; // 5 minutes
             // Clear the textarea after the specified time interval
             setTimeout(() => {
               document.getElementById("originalText").value = "";
-              document.getElementById("cleanedText").value = "";
+              document.getElementById("cleanedText").innerText = "";
             }, timeInterval);
           });
       }
@@ -139,8 +195,11 @@
       emptyTextArea();
 
       function copyText() {
-        const cleanedText = document.getElementById("cleanedText");
-        cleanedText.select();
+        const cleanedTextElement = document.getElementById("cleanedText");
+        const range = document.createRange();
+        range.selectNode(cleanedTextElement);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
         document.execCommand("copy");
       }
     </script>
