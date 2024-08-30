@@ -74,45 +74,6 @@
     </div>
 
     <script>
-      function removeConsecutiveDuplicatesInClauses(text) {
-        // Split the text into sentences using regex to match punctuation marks (., !, ?)
-        let sentences = text.split(/(?<=[.!?])\s+/);
-        let resultSentences = [];
-
-        sentences.forEach((sentence) => {
-          // Split the sentence into clauses based on commas or semicolons
-          let clauses = sentence.split(/[,;]\s*/);
-          let cleanedClauses = [];
-
-          clauses.forEach((clause) => {
-            // Split the clause into words
-            let words = clause.split(/\s+/);
-            let cleanedWords = [];
-
-            // Remove consecutive duplicate words without case sensitivity
-            words.forEach((word, i) => {
-              if (
-                i === 0 ||
-                word.toLowerCase() !== words[i - 1].toLowerCase()
-              ) {
-                cleanedWords.push(word);
-              }
-            });
-
-            // Reconstruct the clause from cleaned words
-            let cleanedClause = cleanedWords.join(" ");
-            cleanedClauses.push(cleanedClause);
-          });
-
-          // Reconstruct the sentence from cleaned clauses
-          let cleanedSentence = cleanedClauses.join(", ");
-          resultSentences.push(cleanedSentence);
-        });
-
-        // Join the cleaned sentences back into a single text string
-        return resultSentences.join(" ");
-      }
-
       function cleanText() {
         const fillerWords = [
           "\\bMm-Hmm\\b",
@@ -122,10 +83,8 @@
           "\\bUm\\b",
           "\\bHmm\\b",
           "\\byou know\\b",
-          "\\bI mean\\b",
-          "\\bkind of\\b",
           "\\bMm\\b",
-          "\\buhuh\\b",
+          "\\bhuhuh\\b",
           "\\beh\\b",
         ];
 
@@ -182,7 +141,7 @@
           );
 
           // Remove duplicate words, clauses, and sentences
-          return removeConsecutiveDuplicatesInClauses(cleanedSection);
+          return cleanedSection;
         });
 
         // Combine cleaned sections with a line break between them
