@@ -181,7 +181,7 @@
           );
 
           // Remove duplicate words, clauses, and sentences
-          return cleanedSection;
+          return removeDuplicates(cleanedSection);
         });
 
         // Combine cleaned sections with a line break between them
