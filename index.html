@@ -15,26 +15,28 @@
         margin: auto;
         display: flex;
         width: 100vw;
+        justify-content: center;
+        padding: 0;
         gap: 2px;
       }
 
       .pasting-area {
         display: flex;
         height: 90vh;
-        width: 50vw;
         flex-direction: column;
         margin-top: 20px;
         padding: 10px;
         font-size: 14px;
+        width: 48vw;
       }
 
       .cleaned-text {
-        height: 90vh;
+        height: 95vh;
         display: flex;
-        width: 50%;
+        width: 48vw;
         flex-direction: column;
-        margin-top: 20px;
         padding: 10px;
+        margin-left: 3px;
         font-size: 14px;
         overflow-y: auto; /* Allow scrolling if text overflows */
         border: 1px solid #ddd;
@@ -48,6 +50,30 @@
         padding: 10px 20px;
         font-size: 16px;
         cursor: pointer;
+      }
+
+      .copy-btn {
+        background-color: #ff8343;
+        border-radius: 5px;
+        border: none;
+        color: #fff;
+        transition: all 0.5s ease;
+      }
+
+      .copy-btn:hover {
+        background-color: #f1dec6;
+      }
+
+      .clean-btn {
+        background-color: #3fa2f6;
+        border-radius: 5px;
+        border: none;
+        color: white;
+        transition: all 0.5s ease;
+      }
+
+      .clean-btn:hover {
+        background-color: #96c9f4;
       }
 
       .text-content {
@@ -64,16 +90,55 @@
         placeholder="Paste your text here..."
         autofocus
       ></textarea>
-      <button onclick="cleanText()">Clean Text</button>
+      <button class="clean-btn" onclick="cleanText()">Clean Text</button>
     </div>
 
     <div class="cleaned-text">
       <h2>Cleaned Text</h2>
       <div id="cleanedText" class="text-content"></div>
-      <button onclick="copyText()">Copy to Clipboard</button>
+      <button class="copy-btn" onclick="copyText()">Copy to Clipboard</button>
     </div>
 
     <script>
+      function removeConsecutiveDuplicatesInClauses(text) {
+        // Split the text into sentences using regex to match punctuation marks (., !, ?)
+        let sentences = text.split(/(?<=[.!?])\s+/);
+        let resultSentences = [];
+
+        sentences.forEach((sentence) => {
+          // Split the sentence into clauses based on commas or semicolons
+          let clauses = sentence.split(/[,;]\s*/);
+          let cleanedClauses = [];
+
+          clauses.forEach((clause) => {
+            // Split the clause into words
+            let words = clause.split(/\s+/);
+            let cleanedWords = [];
+
+            // Remove consecutive duplicate words without case sensitivity
+            words.forEach((word, i) => {
+              if (
+                i === 0 ||
+                word.toLowerCase() !== words[i - 1].toLowerCase()
+              ) {
+                cleanedWords.push(word);
+              }
+            });
+
+            // Reconstruct the clause from cleaned words
+            let cleanedClause = cleanedWords.join(" ");
+            cleanedClauses.push(cleanedClause);
+          });
+
+          // Reconstruct the sentence from cleaned clauses
+          let cleanedSentence = cleanedClauses.join(", ");
+          resultSentences.push(cleanedSentence);
+        });
+
+        // Join the cleaned sentences back into a single text string
+        return resultSentences.join(" ");
+      }
+
       function cleanText() {
         const fillerWords = [
           "\\bMm-Hmm\\b",
@@ -82,10 +147,16 @@
           "\\bUh\\b",
           "\\bUm\\b",
           "\\bHmm\\b",
-          "\\byou know\\b",
           "\\bMm\\b",
-          "\\bhuhuh\\b",
-          "\\beh\\b",
+          "\\bUh-huh\\b",
+          "\\bUmm\\b",
+          "\\byou know\\b",
+          "\\bBasically\\b",
+          "\\bI think\\b",
+          "\\bI mean\\b",
+          "\\bSo\\b",
+          "\\bactually\\b",
+          "\\like\\b",
         ];
 
         let originalText = document.getElementById("originalText").value;
@@ -111,15 +182,16 @@
               .trim();
           });
 
-          // Remove double commas
-          cleanedSection = cleanedSection.replace(/,\s*,+/g, "");
-          // Remove double periods, even if separated by spaces
-          cleanedSection = cleanedSection.replace(/(\.\s*){2,}/g, ".");
+          // Remove consecutive commas, periods, question marks, exclamation points, or a mix of these
+          cleanedSection = cleanedSection.replace(/([.,!?])\1+/g, "$1");
+
           // Remove any instance of "<...>"
           cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
+
           // Remove commas before or after a period or question mark
           cleanedSection = cleanedSection.replace(/\s*,\s*([.?])/g, "$1");
           cleanedSection = cleanedSection.replace(/([.?])\s*,\s*/g, "$1");
+
           // Remove commas with no text before them
           cleanedSection = cleanedSection.replace(/\s*,/g, "");
 
@@ -141,7 +213,7 @@
           );
 
           // Remove duplicate words, clauses, and sentences
-          return cleanedSection;
+          return removeConsecutiveDuplicatesInClauses(cleanedSection);
         });
 
         // Combine cleaned sections with a line break between them
