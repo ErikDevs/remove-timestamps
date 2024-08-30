@@ -100,45 +100,6 @@
     </div>
 
     <script>
-      function removeConsecutiveDuplicatesInClauses(text) {
-        // Split the text into sentences using regex to match punctuation marks (., !, ?)
-        let sentences = text.split(/(?<=[.!?])\s+/);
-        let resultSentences = [];
-
-        sentences.forEach((sentence) => {
-          // Split the sentence into clauses based on commas or semicolons
-          let clauses = sentence.split(/[,;]\s*/);
-          let cleanedClauses = [];
-
-          clauses.forEach((clause) => {
-            // Split the clause into words
-            let words = clause.split(/\s+/);
-            let cleanedWords = [];
-
-            // Remove consecutive duplicate words without case sensitivity
-            words.forEach((word, i) => {
-              if (
-                i === 0 ||
-                word.toLowerCase() !== words[i - 1].toLowerCase()
-              ) {
-                cleanedWords.push(word);
-              }
-            });
-
-            // Reconstruct the clause from cleaned words
-            let cleanedClause = cleanedWords.join(" ");
-            cleanedClauses.push(cleanedClause);
-          });
-
-          // Reconstruct the sentence from cleaned clauses
-          let cleanedSentence = cleanedClauses.join(", ");
-          resultSentences.push(cleanedSentence);
-        });
-
-        // Join the cleaned sentences back into a single text string
-        return resultSentences.join(" ");
-      }
-
       function cleanText() {
         const fillerWords = [
           "\\bMm-Hmm\\b",
@@ -150,13 +111,6 @@
           "\\bMm\\b",
           "\\bUh-huh\\b",
           "\\bUmm\\b",
-          "\\bBasically\\b",
-          "\\bI think\\b",
-          "\\bSo\\b",
-          "\\blike\\b",
-          "\\bI mean\\b",
-          "\\bYou know\\b",
-          "\\bactually\\b",
         ];
 
         let originalText = document.getElementById("originalText").value;
@@ -211,14 +165,11 @@
               return match.replace(p1, p1.toUpperCase());
             }
           );
-
-          // Remove duplicate words, clauses, and sentences
-          return removeConsecutiveDuplicatesInClauses(cleanedSection);
+          return cleanedSection;
         });
 
         // Combine cleaned sections with a line break between them
         let finalText = cleanedSections.join("\n\n");
-
         // Display cleaned text in a div with proper line breaks
         document.getElementById("cleanedText").innerText = finalText.trim();
       }
@@ -237,8 +188,6 @@
           });
       }
 
-      emptyTextArea();
-
       function copyText() {
         const cleanedTextElement = document.getElementById("cleanedText");
         const range = document.createRange();
@@ -247,6 +196,8 @@
         window.getSelection().addRange(range);
         document.execCommand("copy");
       }
+
+      emptyTextArea();
     </script>
   </body>
 </html>
