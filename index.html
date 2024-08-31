@@ -12,91 +12,75 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        margin: auto;
+        margin: 0;
+        padding: 20px;
         display: flex;
-        width: 100vw;
         justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        box-sizing: border-box; /* Include padding in element's width and height */
+      }
+
+      .text-area {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
         padding: 0;
-        gap: 2px;
+        box-sizing: border-box;
       }
 
-      .pasting-area {
-        display: flex;
-        height: 90vh;
-        flex-direction: column;
-        margin-top: 20px;
-        padding: 10px;
-        font-size: 14px;
-        width: 48vw;
-      }
-
-      .cleaned-text {
-        height: 95vh;
-        display: flex;
-        width: 48vw;
-        flex-direction: column;
-        padding: 10px;
-        margin-left: 3px;
-        font-size: 14px;
-        overflow-y: auto; /* Allow scrolling if text overflows */
-        border: 1px solid #ddd;
+      h2 {
+        margin: 0 0 10px 0;
+        font-size: 18px;
+        text-align: center;
       }
 
       textarea {
-        height: 100%;
-      }
-      button {
-        margin-top: 20px;
-        padding: 10px 20px;
+        width: 100%;
+        height: calc(
+          100% - 60px
+        ); /* Adjust to account for headings and button */
         font-size: 16px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+        resize: none;
+        outline: none;
+        overflow-y: auto; /* Allow scrolling if text overflows */
+      }
+
+      button {
+        width: 100%;
+        height: 40px;
+        font-size: 20px;
         cursor: pointer;
-      }
-
-      .copy-btn {
-        background-color: #ff8343;
-        border-radius: 5px;
+        border-radius: 4px;
         border: none;
-        color: #fff;
-        transition: all 0.5s ease;
-      }
-
-      .copy-btn:hover {
-        background-color: #f1dec6;
-      }
-
-      .clean-btn {
+        margin-top: 10px;
         background-color: #3fa2f6;
-        border-radius: 5px;
-        border: none;
         color: white;
-        transition: all 0.5s ease;
+        transition: background-color 0.5s ease;
       }
 
-      .clean-btn:hover {
+      button:hover {
         background-color: #96c9f4;
-      }
-
-      .text-content {
-        white-space: pre-wrap; /* Preserve whitespace and line breaks */
       }
     </style>
   </head>
   <body>
-    <div class="pasting-area">
+    <div class="text-area">
       <h2>Paste Your Text Below</h2>
       <textarea
-        class=""
-        id="originalText"
+        id="textArea"
         placeholder="Paste your text here..."
         autofocus
       ></textarea>
-      <button class="clean-btn" onclick="cleanText()">Clean Text</button>
-    </div>
-
-    <div class="cleaned-text">
-      <h2>Cleaned Text</h2>
-      <div id="cleanedText" class="text-content"></div>
-      <button class="copy-btn" onclick="copyText()">Copy to Clipboard</button>
+      <button class="action-btn" id="actionButton" onclick="handleAction()">
+        Clean Text
+      </button>
     </div>
 
     <script>
@@ -113,21 +97,18 @@
           "\\bUmm\\b",
         ];
 
-        let originalText = document.getElementById("originalText").value;
+        let originalText = document.getElementById("textArea").value;
 
-        // Split text by each speaker section
         let speakerSections = originalText.split(
           /(?=Speaker [0-9]+\s+\d{2}:\d{2}:\d{2})/
         );
 
         let cleanedSections = speakerSections.map((section) => {
-          // Remove the speaker's timestamp
           let cleanedSection = section.replace(
             /Speaker [0-9]+\s+\d{2}:\d{2}:\d{2}/g,
             "\n"
           );
 
-          // Remove filler words
           fillerWords.forEach((filler) => {
             const fillerPattern = new RegExp(filler, "gi");
             cleanedSection = cleanedSection
@@ -136,20 +117,15 @@
               .trim();
           });
 
-          // Remove consecutive commas, periods, question marks, exclamation points, or a mix of these
           cleanedSection = cleanedSection.replace(/([.,!?])\1+/g, "$1");
 
-          // Remove any instance of "<...>"
           cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
 
-          // Remove commas before or after a period or question mark
           cleanedSection = cleanedSection.replace(/\s*,\s*([.?])/g, "$1");
           cleanedSection = cleanedSection.replace(/([.?])\s*,\s*/g, "$1");
 
-          // Remove commas with no text before them
           cleanedSection = cleanedSection.replace(/\s*,/g, "");
 
-          // Capitalize the first letter after a period or question mark, including if it has symbols
           cleanedSection = cleanedSection.replace(
             /([.!?])\s*(['"]?)([a-z])/g,
             (match, p1, p2, p3) => {
@@ -157,7 +133,6 @@
             }
           );
 
-          // Ensure a space after each period or question mark and capitalize the first letter after them
           cleanedSection = cleanedSection.replace(/([.?])([a-zA-Z])/g, "$1 $2");
           cleanedSection = cleanedSection.replace(
             /(?:^|[.!?]\s+)([a-z])/g,
@@ -168,33 +143,41 @@
           return cleanedSection;
         });
 
-        // Combine cleaned sections with a line break between them
         let finalText = cleanedSections.join("\n\n");
-        // Display cleaned text in a div with proper line breaks
-        document.getElementById("cleanedText").innerText = finalText.trim();
+
+        document.getElementById("textArea").value = finalText.trim();
+      }
+
+      function copyText() {
+        const textArea = document.getElementById("textArea");
+        textArea.select();
+        document.execCommand("copy");
+      }
+
+      function handleAction() {
+        const button = document.getElementById("actionButton");
+        const isCleaning = button.innerText === "Clean Text";
+
+        if (isCleaning) {
+          cleanText();
+          button.innerText = "Copy to Clipboard";
+          button.onclick = copyText;
+        } else {
+          copyText();
+        }
       }
 
       function emptyTextArea() {
         document
-          .getElementById("originalText")
+          .getElementById("textArea")
           .addEventListener("paste", function () {
-            // Set the time interval (in milliseconds) after which the textarea will be cleared
             const timeInterval = 300000; // 5 minutes
-            // Clear the textarea after the specified time interval
             setTimeout(() => {
-              document.getElementById("originalText").value = "";
-              document.getElementById("cleanedText").innerText = "";
+              document.getElementById("textArea").value = "";
+              document.getElementById("actionButton").innerText = "Clean Text";
+              document.getElementById("actionButton").onclick = handleAction;
             }, timeInterval);
           });
-      }
-
-      function copyText() {
-        const cleanedTextElement = document.getElementById("cleanedText");
-        const range = document.createRange();
-        range.selectNode(cleanedTextElement);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-        document.execCommand("copy");
       }
 
       emptyTextArea();
