@@ -236,11 +236,10 @@
         document
           .getElementById("textArea")
           .addEventListener("paste", function () {
-            const timeInterval = 300000;
+            const timeInterval = 5 * (1 * 1000 * 6);
             setTimeout(() => {
               document.getElementById("textArea").value = "";
               document.getElementById("actionButton").innerText = "Clean Text";
-              document.getElementById("actionButton").onclick = handleAction;
             }, timeInterval);
           });
       }
