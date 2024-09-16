@@ -231,20 +231,6 @@
           copyText(); // If button is not for cleaning, copy the text
         }
       }
-
-      function emptyTextArea() {
-        document
-          .getElementById("textArea")
-          .addEventListener("paste", function () {
-            const timeInterval = 5 * (1 * 1000 * 60);
-            setTimeout(() => {
-              document.getElementById("textArea").value = "";
-              document.getElementById("actionButton").innerText = "Clean Text";
-            }, timeInterval);
-          });
-      }
-
-      emptyTextArea();
     </script>
   </body>
 </html>
