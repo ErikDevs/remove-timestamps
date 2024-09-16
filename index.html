@@ -196,7 +196,8 @@
 
         if (isCleaning) {
           cleanText(); // Clean the text if the button says "Clean Text".
-          button.innerText = "Copy to Clipboard"; // Change the button text to "Copy to Clipboard".
+          button.innerText = "Copy to Clipboard"; 
+          button.style.backgroundColor = "#1f883b" // Change the button text to "Copy to Clipboard".
           button.onclick = copyText; // Set the button's onclick event to copyText function.
         } else {
           copyText(); // If the button is not for cleaning, just copy the text.
