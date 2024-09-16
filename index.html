@@ -234,8 +234,8 @@
         const timeInterval = 300000; // Set the time interval to 5 minutes (300,000 ms).
         setTimeout(() => {
           document.getElementById("textArea").value = "";
-          document.getElementById("buttonText").innerText = "Clean Text";
-          document.getElementById("actionButton").addEventListener("click", handleAction)
+          const button = document.getElementById("actionButton");
+          button.innerText = "Clean Text";
         }, timeInterval);
       });
     }
