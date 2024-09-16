@@ -189,11 +189,11 @@
       // Function to handle the action button click.
       function handleAction() {
         const button = document.getElementById("actionButton");
-        const isCleaning = button.innerText === "Clean Text"; // Check if the button is for cleaning.
+        const isCleaning = button.innerText === "Remove filler words"; // Check if the button is for cleaning.
         
         if (isCleaning) {
           cleanText(); // Clean the text if the button says "Clean Text".
-          button.innerText = "Copy to Clipboard"; // Change the button text to "Copy to Clipboard".
+          button.innerText = "Copy to text to clipboard"; // Change the button text to "Copy to Clipboard".
           button.style.backgroundColor = "orange"
           button.onclick = copyText; // Set the button's onclick event to copyText function.
         } else {
