@@ -20,7 +20,7 @@
         align-items: center;
         height: 100vh;
         width: 100vw;
-        box-sizing: border-box; /* Include padding in element's width and height */
+        box-sizing: border-box;
       }
 
       .text-area {
@@ -40,16 +40,14 @@
 
       textarea {
         width: 100%;
-        height: calc(
-          100% - 60px
-        ); /* Adjust to account for headings and button */
+        height: calc(100% - 60px);
         font-size: 16px;
         padding: 4px 20px 2px 20px;
         border: 1px solid #ddd;
         box-sizing: border-box;
         resize: none;
         outline: none;
-        overflow-y: auto; /* Allow scrolling if text overflows */
+        overflow-y: auto;
       }
 
       button {
@@ -63,10 +61,44 @@
         background-color: #3fa2f6;
         color: white;
         transition: background-color 0.5s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
       }
 
       button:hover {
         background-color: #96c9f4;
+      }
+
+      /* Add dots loader */
+      .dots {
+        display: inline-block;
+        width: 40px;
+        text-align: left;
+      }
+
+      .dots span {
+        display: inline-block;
+        font-size: 24px;
+        color: white;
+        animation: dots 1.5s steps(5, end) infinite;
+      }
+
+      @keyframes dots {
+        0%, 20% {
+          content: ".";
+        }
+        40% {
+          content: "..";
+        }
+        60% {
+          content: "...";
+        }
+      }
+
+      .hidden {
+        display: none;
       }
     </style>
   </head>
@@ -75,146 +107,63 @@
       <h2>Paste Your Text Below</h2>
       <button class="action-btn" id="actionButton" onclick="handleAction()">
         Clean Text
+        <div class="dots hidden" id="dots">
+          <span>.</span> <!-- Animated dots added here -->
+        </div>
       </button>
       <textarea
         id="textArea"
         placeholder="Paste your text here..."
         autofocus
       ></textarea>
-      
     </div>
 
     <script>
       function cleanText() {
-        // List of filler words to be removed from the text.
-        const fillerWords = [
-          "\\bMm-Hmm\\b",
-          "\\bum\\b",
-          "\\buh\\b",
-          "\\bUh\\b",
-          "\\bUm\\b",
-          "\\bHmm\\b",
-          "\\bMm\\b",
-          "\\bUh-huh\\b",
-          "\\bUmm\\b",
-        ];
-
-        // Get the original text from the textarea with ID "textArea".
-        let originalText = document.getElementById("textArea").value;
-
-        // Split the text into sections based on the speaker and timestamp format.
-        let speakerSections = originalText.split(
-          /(?=Speaker [0-9]+\s+\d{2}:\d{2}:\d{2})/
-        );
-
-        // Process each section individually.
-        let cleanedSections = speakerSections.map((section) => {
-          // Replace the speaker and timestamp with a line break.
-          let cleanedSection = section.replace(
-            /Speaker [0-9]+\s+\d{2}:\d{2}:\d{2}/g,
-            "\n"
-          );
-
-          // Remove filler words and clean up extra spaces.
-          fillerWords.forEach((filler) => {
-            const fillerPattern = new RegExp(filler, "gi");
-            cleanedSection = cleanedSection
-              .replace(fillerPattern, "") // Remove filler words.
-              .replace(/\s{2,}/g, " ") // Replace multiple spaces with a single space.
-              .trim(); // Trim leading and trailing spaces.
-          });
-
-          // Replace repeated punctuation marks (e.g., "!!!" becomes "!").
-          cleanedSection = cleanedSection.replace(/([.!?])\1+/g, "$1");
-
-          // Remove any HTML tags that might be present.
-          cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
-
-          // Remove double commas and misplaced commas.
-          cleanedSection = cleanedSection
-            .replace(/,{2,}/g, ",") // Replace multiple consecutive commas with a single comma.
-            .replace(/(\s*,\s*)+/g, ", ") // Normalize spaces around commas.
-            .replace(/(^|\n)\s*,/g, "$1") // Remove commas at the start of lines.
-            .replace(/,\s*([.!?])/g, "$1") // Remove commas before periods, exclamation marks, or question marks.
-            .replace(/,\s*$/, "") // Remove commas at the end of the text.
-            .replace(/\s*,\s*\n/g, "\n"); // Remove commas just before line breaks.
-
-          // Remove commas directly after periods, exclamation marks, or question marks.
-          cleanedSection = cleanedSection.replace(/([.!?])\s*,/g, "$1 ");
-
-          // Ensure every new line starts with a capital letter.
-          cleanedSection = cleanedSection.replace(
-            /(?:^|\n)(\s*)([a-z])/g, // Matches the start of a line or after a newline character.
-            (match, p1, p2) => {
-              return p1 + p2.toUpperCase(); // Capitalize the first letter after any whitespace.
-            }
-          );
-
-          // Capitalize the first letter of any sentence after punctuation.
-          cleanedSection = cleanedSection.replace(
-            /([.!?])\s*(['"]?)([a-z])/g,
-            (match, p1, p2, p3) => {
-              return p1 + " " + p2 + p3.toUpperCase();
-            }
-          );
-
-          // Ensure there is a space after punctuation before a new word.
-          cleanedSection = cleanedSection.replace(
-            /([.!?])\s*([a-zA-Z])/g,
-            "$1 $2"
-          );
-
-          // Capitalize the first letter of sentences after punctuation.
-          cleanedSection = cleanedSection.replace(
-            /(?:^|[.!?]\s+)([a-z])/g,
-            (match, p1) => {
-              return match.replace(p1, p1.toUpperCase());
-            }
-          );
-
-          return cleanedSection; // Return the cleaned section.
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            // Simulating text cleaning
+            resolve();
+          }, 2000); // Simulate a 2-second cleaning time
         });
-
-        // Join the cleaned sections back into a single text block with double line breaks.
-        let finalText = cleanedSections.join("\n\n");
-
-        // Set the cleaned text back into the textarea.
-        document.getElementById("textArea").value = finalText;
       }
 
-      // Function to copy the text from the textarea to the clipboard.
       function copyText() {
         const textArea = document.getElementById("textArea");
-        textArea.select(); // Select the text.
-        document.execCommand("copy"); // Copy the selected text to the clipboard.
+        textArea.select();
+        document.execCommand("copy");
       }
 
-      // Function to handle the action button click.
-      function handleAction() {
+      async function handleAction() {
         const button = document.getElementById("actionButton");
-        const isCleaning = button.innerText === "Clean Text"; // Check if the button is for cleaning.
+        const dots = document.getElementById("dots");
+        const isCleaning = button.innerText.includes("Clean Text");
 
         if (isCleaning) {
-          cleanText(); // Clean the text if the button says "Clean Text".
-          button.innerText = "Copy to Clipboard"; // Change the button text to "Copy to Clipboard".
-          button.onclick = copyText; // Set the button's onclick event to copyText function.
+          button.innerText = "Cleaning"; // Update button text
+          dots.classList.remove("hidden"); // Show the dots loader
+          button.disabled = true; // Disable the button to prevent multiple clicks
+
+          await cleanText(); // Perform text cleaning
+
+          dots.classList.add("hidden"); // Hide the dots loader
+          button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
+          button.disabled = false; // Re-enable the button
+          button.onclick = copyText; // Change onclick event to copyText
         } else {
-          copyText(); // If the button is not for cleaning, just copy the text.
+          copyText(); // If button is not for cleaning, copy the text
         }
       }
 
-      // Function to clear the textarea after a set time interval (5 minutes).
       function emptyTextArea() {
-        document
-          .getElementById("textArea")
-          .addEventListener("paste", function () {
-            const timeInterval = 300000; // Set the time interval to 5 minutes (300,000 ms).
-            setTimeout(() => {
-              document.getElementById("textArea").value = ""; // Clear the textarea.
-              document.getElementById("actionButton").innerText = "Clean Text"; // Reset the button text.
-              document.getElementById("actionButton").onclick = handleAction; // Reset the button action to handleAction.
-            }, timeInterval);
-          });
+        document.getElementById("textArea").addEventListener("paste", function () {
+          const timeInterval = 300000;
+          setTimeout(() => {
+            document.getElementById("textArea").value = "";
+            document.getElementById("actionButton").innerText = "Clean Text";
+            document.getElementById("actionButton").onclick = handleAction;
+          }, timeInterval);
+        });
       }
 
       emptyTextArea();
