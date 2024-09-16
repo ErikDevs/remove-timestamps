@@ -235,7 +235,7 @@
         setTimeout(() => {
           document.getElementById("textArea").value = "";
           document.getElementById("buttonText").innerText = "Clean Text";
-          document.getElementById("actionButton").onclick = handleAction()
+          document.getElementById("actionButton").addEventListener("click", handleAction)
         }, timeInterval);
       });
     }
