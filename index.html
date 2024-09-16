@@ -71,29 +71,18 @@
         background-color: #96c9f4;
       }
 
-      /* Add dots loader */
-      .dots {
-        display: inline-block;
-        width: 40px;
-        text-align: left;
+      /* Loader styles */
+      .loader {
+        width: 60px;
+        aspect-ratio: 4;
+        background: radial-gradient(circle closest-side, #fff 90%, #0000) 0/calc(100%/3) 100% space;
+        clip-path: inset(0 100% 0 0);
+        animation: l1 1s steps(4) infinite;
       }
 
-      .dots span {
-        display: inline-block;
-        font-size: 24px;
-        color: white;
-        animation: dots 1.5s steps(5, end) infinite;
-      }
-
-      @keyframes dots {
-        0%, 20% {
-          content: ".";
-        }
-        40% {
-          content: "..";
-        }
-        60% {
-          content: "...";
+      @keyframes l1 {
+        to {
+          clip-path: inset(0 -34% 0 0);
         }
       }
 
@@ -107,9 +96,7 @@
       <h2>Paste Your Text Below</h2>
       <button class="action-btn" id="actionButton" onclick="handleAction()">
         Clean Text
-        <div class="dots hidden" id="dots">
-          <span>.</span> <!-- Animated dots added here -->
-        </div>
+        <div class="loader hidden" id="loader"></div>
       </button>
       <textarea
         id="textArea"
@@ -136,18 +123,18 @@
 
       async function handleAction() {
         const button = document.getElementById("actionButton");
-        const dots = document.getElementById("dots");
+        const loader = document.getElementById("loader");
         const isCleaning = button.innerText.includes("Clean Text");
 
         if (isCleaning) {
-          button.innerHTML = ""; // Remove the button text
-          dots.classList.remove("hidden"); // Show the dots loader
-          button.appendChild(dots); // Append the dots to the button
-          button.disabled = true; // Disable the button to prevent multiple clicks
+          button.innerText = ""; // Remove the button text
+          loader.classList.remove("hidden"); // Show the loader
+          button.appendChild(loader); // Append the loader to the button
+          button.disabled = true; // Disable the button
 
           await cleanText(); // Perform text cleaning
 
-          dots.classList.add("hidden"); // Hide the dots loader
+          loader.classList.add("hidden"); // Hide the loader
           button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
           button.disabled = false; // Re-enable the button
           button.onclick = copyText; // Change onclick event to copyText
