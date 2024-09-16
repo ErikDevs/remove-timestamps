@@ -209,7 +209,7 @@
         textArea.select();
         document.execCommand("copy");
       }
-
+      copyText()
       async function handleAction() {
         const button = document.getElementById("actionButton");
         const loader = document.getElementById("loader");
@@ -227,9 +227,7 @@
           button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
           button.disabled = false; // Re-enable the button
           button.onclick = copyText; // Change onclick event to copyText
-        } else {
-          copyText(); // If button is not for cleaning, copy the text
-        }
+        } 
       }
     </script>
   </body>
