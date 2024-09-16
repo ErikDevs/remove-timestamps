@@ -65,6 +65,7 @@
         justify-content: center;
         align-items: center;
         position: relative;
+        overflow: hidden;
       }
 
       button:hover {
@@ -108,107 +109,111 @@
     <script>
       function cleanText() {
         return new Promise((resolve) => {
-          setTimeout(() => {
-            // List of filler words to be removed from the text.
-            const fillerWords = [
-              "\\bMm-Hmm\\b",
-              "\\bum\\b",
-              "\\buh\\b",
-              "\\bUh\\b",
-              "\\bUm\\b",
-              "\\bHmm\\b",
-              "\\bMm\\b",
-              "\\bUh-huh\\b",
-              "\\bUmm\\b",
-            ];
+          // List of filler words to be removed from the text.
+          const fillerWords = [
+            "\\bMm-Hmm\\b",
+            "\\bum\\b",
+            "\\buh\\b",
+            "\\bUh\\b",
+            "\\bUm\\b",
+            "\\bHmm\\b",
+            "\\bMm\\b",
+            "\\bUh-huh\\b",
+            "\\bUmm\\b",
+          ];
 
-            // Get the original text from the textarea with ID "textArea".
-            let originalText = document.getElementById("textArea").value;
+          // Get the original text from the textarea with ID "textArea".
+          let originalText = document.getElementById("textArea").value;
 
-            // Split the text into sections based on the speaker and timestamp format.
-            let speakerSections = originalText.split(
-              /(?=Speaker [0-9]+\s+\d{2}:\d{2}:\d{2})/
+          // Split the text into sections based on the speaker and timestamp format.
+          let speakerSections = originalText.split(
+            /(?=Speaker [0-9]+\s+\d{2}:\d{2}:\d{2})/
+          );
+
+          // Process each section individually.
+          let cleanedSections = speakerSections.map((section) => {
+            // Replace the speaker and timestamp with a line break.
+            let cleanedSection = section.replace(
+              /Speaker [0-9]+\s+\d{2}:\d{2}:\d{2}/g,
+              "\n"
             );
 
-            // Process each section individually.
-            let cleanedSections = speakerSections.map((section) => {
-              // Replace the speaker and timestamp with a line break.
-              let cleanedSection = section.replace(
-                /Speaker [0-9]+\s+\d{2}:\d{2}:\d{2}/g,
-                "\n"
-              );
-
-              // Remove filler words and clean up extra spaces.
-              fillerWords.forEach((filler) => {
-                const fillerPattern = new RegExp(filler, "gi");
-                cleanedSection = cleanedSection
-                  .replace(fillerPattern, "") // Remove filler words.
-                  .replace(/\s{2,}/g, " ") // Replace multiple spaces with a single space.
-                  .trim(); // Trim leading and trailing spaces.
-              });
-
-              // Replace repeated punctuation marks (e.g., "!!!" becomes "!").
-              cleanedSection = cleanedSection.replace(/([.!?])\1+/g, "$1");
-
-              // Remove any HTML tags that might be present.
-              cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
-
-              // Remove double commas and misplaced commas.
+            // Remove filler words and clean up extra spaces.
+            fillerWords.forEach((filler) => {
+              const fillerPattern = new RegExp(filler, "gi");
               cleanedSection = cleanedSection
-                .replace(/,{2,}/g, ",") // Replace multiple consecutive commas with a single comma.
-                .replace(/(\s*,\s*)+/g, ", ") // Normalize spaces around commas.
-                .replace(/(^|\n)\s*,/g, "$1") // Remove commas at the start of lines.
-                .replace(/,\s*([.!?])/g, "$1") // Remove commas before periods, exclamation marks, or question marks.
-                .replace(/,\s*$/, "") // Remove commas at the end of the text.
-                .replace(/\s*,\s*\n/g, "\n"); // Remove commas just before line breaks.
-
-              // Remove commas directly after periods, exclamation marks, or question marks.
-              cleanedSection = cleanedSection.replace(/([.!?])\s*,/g, "$1 ");
-
-              // Ensure every new line starts with a capital letter.
-              cleanedSection = cleanedSection.replace(
-                /(?:^|\n)(\s*)([a-z])/g,
-                (match, p1, p2) => {
-                  return p1 + p2.toUpperCase(); // Capitalize the first letter after any whitespace.
-                }
-              );
-
-              // Capitalize the first letter of any sentence after punctuation.
-              cleanedSection = cleanedSection.replace(
-                /([.!?])\s*(['"]?)([a-z])/g,
-                (match, p1, p2, p3) => {
-                  return p1 + " " + p2 + p3.toUpperCase();
-                }
-              );
-
-              // Ensure there is a space after punctuation before a new word.
-              cleanedSection = cleanedSection.replace(
-                /([.!?])\s*([a-zA-Z])/g,
-                "$1 $2"
-              );
-
-              return cleanedSection; // Return the cleaned section.
+                .replace(fillerPattern, "") // Remove filler words.
+                .replace(/\s{2,}/g, " ") // Replace multiple spaces with a single space.
+                .trim(); // Trim leading and trailing spaces.
             });
 
-            // Join the cleaned sections back into a single text block with double line breaks.
-            let finalText = cleanedSections.join("\n\n");
+            // Replace repeated punctuation marks (e.g., "!!!" becomes "!").
+            cleanedSection = cleanedSection.replace(/([.!?])\1+/g, "$1");
 
-            // Set the cleaned text back into the textarea.
-            document.getElementById("textArea").value = finalText;
+            // Remove any HTML tags that might be present.
+            cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
 
-            resolve(); // Resolve the promise when cleaning is done.
-          }, 2000); // Simulate a 2-second cleaning time
+            // Remove double commas and misplaced commas.
+            cleanedSection = cleanedSection
+              .replace(/,{2,}/g, ",") // Replace multiple consecutive commas with a single comma.
+              .replace(/(\s*,\s*)+/g, ", ") // Normalize spaces around commas.
+              .replace(/(^|\n)\s*,/g, "$1") // Remove commas at the start of lines.
+              .replace(/,\s*([.!?])/g, "$1") // Remove commas before periods, exclamation marks, or question marks.
+              .replace(/,\s*$/, "") // Remove commas at the end of the text.
+              .replace(/\s*,\s*\n/g, "\n"); // Remove commas just before line breaks.
+
+            // Remove commas directly after periods, exclamation marks, or question marks.
+            cleanedSection = cleanedSection.replace(/([.!?])\s*,/g, "$1 ");
+
+            // Ensure every new line starts with a capital letter.
+            cleanedSection = cleanedSection.replace(
+              /(?:^|\n)(\s*)([a-z])/g, // Matches the start of a line or after a newline character.
+              (match, p1, p2) => {
+                return p1 + p2.toUpperCase(); // Capitalize the first letter after any whitespace.
+              }
+            );
+
+            // Capitalize the first letter of any sentence after punctuation.
+            cleanedSection = cleanedSection.replace(
+              /([.!?])\s*(['"]?)([a-z])/g,
+              (match, p1, p2, p3) => {
+                return p1 + " " + p2 + p3.toUpperCase();
+              }
+            );
+
+            // Ensure there is a space after punctuation before a new word.
+            cleanedSection = cleanedSection.replace(
+              /([.!?])\s*([a-zA-Z])/g,
+              "$1 $2"
+            );
+
+            // Capitalize the first letter of sentences after punctuation.
+            cleanedSection = cleanedSection.replace(
+              /(?:^|[.!?]\s+)([a-z])/g,
+              (match, p1) => {
+                return match.replace(p1, p1.toUpperCase());
+              }
+            );
+
+            return cleanedSection; // Return the cleaned section.
+          });
+
+          // Join the cleaned sections back into a single text block with double line breaks.
+          let finalText = cleanedSections.join("\n\n");
+
+          // Set the cleaned text back into the textarea.
+          document.getElementById("textArea").value = finalText;
+
+          resolve(); // Resolve the promise once cleaning is complete.
         });
       }
 
-      // Function to copy the text from the textarea to the clipboard.
       function copyText() {
         const textArea = document.getElementById("textArea");
         textArea.select(); // Select the text.
         document.execCommand("copy"); // Copy the selected text to the clipboard.
       }
 
-      // Function to handle the action button click.
       async function handleAction() {
         const button = document.getElementById("actionButton");
         const loader = document.getElementById("loader");
@@ -231,15 +236,17 @@
         }
       }
 
-      // Function to clear the textarea after a set time interval (5 minutes).
       function emptyTextArea() {
-        document
-          .getElementById("textArea")
-          .addEventListener("paste", function () {
-            const timeInterval = 300000; // Set the time interval to 5 minutes (300,000 ms).
-            setTimeout(() => {
-              document.getElementById("textArea").value = ""; // Clear the textarea.
-              document.getElementById("actionButton").innerText = "Clean Text"; // Reset the button text.
-              document.getElementById("actionButton").onclick = handleAction; // Reset the button action to handleAction.
-            }, timeInterval);
-          });
+        document.getElementById("textArea").addEventListener("paste", function () {
+          const timeInterval = 300000;
+          setTimeout(() => {
+            document.getElementById("textArea").value = "";
+            document.getElementById("actionButton").innerText = "Clean Text";
+            document.getElementById("actionButton").onclick = handleAction;
+          }, timeInterval);
+        });
+      }
+
+      emptyTextArea();
+    </script>
+ 
