@@ -229,6 +229,7 @@
          setTimeout(() => {
           document.getElementById("textArea").value = "";
           button.innerText = "Clean Text";
+           button.onclick = handleAction;
         }, 5 * 60 * 1000);
       }
 
