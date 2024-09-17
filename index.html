@@ -211,26 +211,37 @@
       }
       
       async function handleAction() {
-        const button = document.getElementById("actionButton");
-        const loader = document.getElementById("loader");
-        const isCleaning = button.innerText === "Clean Text";
-        if (isCleaning) {
-          button.innerText = ""; // Remove the button text
-          loader.classList.remove("hidden"); // Show the loader
-          button.appendChild(loader); // Append the loader to the button
-          button.disabled = true; // Disable the button
-          button.addEventListener("click", await clearText());
-        } else if (!siCleaning) {
-          loader.classList.add("hidden"); // Hide the loader
-          button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
-          button.disabled = false; // Re-enable the button
-          button.onclick = copyText; // Change onclick event to copyText
-        }
-         setTimeout(() => {
-          document.getElementById("textArea").value = "";
-          button.innerText = "Clean Text";
-        }, 5 * 60 * 1000);
-      }
+    const button = document.getElementById("actionButton");
+    const loader = document.getElementById("loader");
+    const isCleaning = button.innerText === "Clean Text";
+
+    if (isCleaning) {
+        button.innerText = ""; // Remove the button text
+        loader.classList.remove("hidden"); // Show the loader
+        button.appendChild(loader); // Append the loader to the button
+        button.disabled = true; // Disable the button
+
+        // Assuming clearText is an async function
+        await clearText(); 
+
+        // Once clearText is done, handle button state update
+        loader.classList.add("hidden"); // Hide the loader
+        button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
+        button.disabled = false; // Re-enable the button
+        button.onclick = copyText; // Change onclick event to copyText
+    } else {
+        loader.classList.add("hidden"); // Hide the loader
+        button.innerText = "Clean Text"; // Change button text back to "Clean Text"
+        button.disabled = false; // Re-enable the button
+        button.onclick = handleAction; // Re-bind the click event to handleAction
+    }
+
+    setTimeout(() => {
+        document.getElementById("textArea").value = "";
+        button.innerText = "Clean Text";
+    }, 5 * 60 * 1000);
+}
+
 
      
 
