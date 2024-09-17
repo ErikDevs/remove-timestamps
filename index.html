@@ -214,22 +214,21 @@
         const button = document.getElementById("actionButton");
         const loader = document.getElementById("loader");
         const isCleaning = button.innerText === "Clean Text";
-
         if (isCleaning) {
           button.innerText = ""; // Remove the button text
           loader.classList.remove("hidden"); // Show the loader
           button.appendChild(loader); // Append the loader to the button
           button.disabled = true; // Disable the button
-          await cleanText(); // Perform text cleaning
+          button.addEventListener("click", await clearText());
+        } else if (!siCleaning) {
           loader.classList.add("hidden"); // Hide the loader
           button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
           button.disabled = false; // Re-enable the button
           button.onclick = copyText; // Change onclick event to copyText
-        } 
+        }
          setTimeout(() => {
           document.getElementById("textArea").value = "";
           button.innerText = "Clean Text";
-           button.onclick = handleAction;
         }, 5 * 60 * 1000);
       }
 
