@@ -83,7 +83,6 @@
           clip-path: inset(0 -34% 0 0);
         }
       }
-
       .hidden {
         display: none;
       }
@@ -190,7 +189,6 @@
                   return match.replace(p1, p1.toUpperCase());
                 }
               );
-
               return cleanedSection; // Return the cleaned section.
             });
 
@@ -210,36 +208,29 @@
         document.execCommand("copy");
       }
       
-    async function handleAction() {
-    const button = document.getElementById("actionButton");
-    const loader = document.getElementById("loader");
-    const isCleaning = button.innerText === "Clean Text";
+      async function handleAction() {
+      const button = document.getElementById("actionButton");
+      const loader = document.getElementById("loader");
+      const isCleaning = button.innerText === "Clean Text";
 
     if (isCleaning) {
         button.innerText = ""; // Remove the button text
         loader.classList.remove("hidden"); // Show the loader
         button.appendChild(loader); // Append the loader to the button
         button.disabled = true; // Disable the button
-
-        // Assuming clearText is an async function
         await clearText(); 
-
-        // Once clearText is done, handle button state update
         loader.classList.add("hidden"); // Hide the loader
         button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
         button.disabled = false; // Re-enable the button
         button.onclick = copyText; // Change onclick event to copyText
     } 
-    setTimeout(() => {
-        document.getElementById("textArea").value = "";
-        button.innerText = "Clean Text";
-    }, 5 * 60 * 1000);
 }
-
-
-     
-
-
+      function reloadPage() {
+            setTimeout(function() {
+                location.reload();
+            }, 300000); 
+        }
+        window.onload = reloadPage;
     </script>
   </body>
 </html>
