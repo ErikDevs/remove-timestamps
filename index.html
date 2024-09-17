@@ -220,27 +220,22 @@
           loader.classList.remove("hidden"); // Show the loader
           button.appendChild(loader); // Append the loader to the button
           button.disabled = true; // Disable the button
-
           await cleanText(); // Perform text cleaning
-
           loader.classList.add("hidden"); // Hide the loader
           button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
           button.disabled = false; // Re-enable the button
           button.onclick = copyText; // Change onclick event to copyText
         } 
-      }
-      function emptyTextArea() {
-      document.getElementById("textArea").addEventListener("paste", function () {
-        const timeInterval = 300000; // Set the time interval to 5 minutes (300,000 ms).
-        setTimeout(() => {
+         setTimeout(() => {
           document.getElementById("textArea").value = "";
-          const button = document.getElementById("actionButton");
           button.innerText = "Clean Text";
-        }, timeInterval);
-      });
-    }
+          await cleanText()
+        }, 5 * 60 * 1000);
+      }
 
-    emptyTextArea();
+     
+
+
     </script>
   </body>
 </html>
