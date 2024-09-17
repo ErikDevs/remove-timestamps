@@ -209,7 +209,7 @@
         textArea.select();
         document.execCommand("copy");
       }
-      copyText()
+      
       async function handleAction() {
         const button = document.getElementById("actionButton");
         const loader = document.getElementById("loader");
@@ -229,7 +229,6 @@
          setTimeout(() => {
           document.getElementById("textArea").value = "";
           button.innerText = "Clean Text";
-          await cleanText()
         }, 5 * 60 * 1000);
       }
 
