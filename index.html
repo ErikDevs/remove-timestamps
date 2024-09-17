@@ -218,7 +218,7 @@
         loader.classList.remove("hidden"); // Show the loader
         button.appendChild(loader); // Append the loader to the button
         button.disabled = true; // Disable the button
-        await clearText(); 
+        await cleanText(); 
         loader.classList.add("hidden"); // Hide the loader
         button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
         button.disabled = false; // Re-enable the button
