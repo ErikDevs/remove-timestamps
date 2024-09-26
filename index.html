@@ -142,15 +142,14 @@
                   .trim(); // Trim leading and trailing spaces.
               });
 
-              // Replace repeated punctuation marks (e.g., "!!!" becomes "!").
-              cleanedSection = cleanedSection.replace(/([.!?])\1+/g, "$1");
+              cleanedSection = cleanedSection.replace(/([.!?])\1+/g, "");
 
               // Remove any HTML tags that might be present.
               cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
 
               // // Remove double commas and misplaced commas.
               // cleanedSection = cleanedSection
-              //   .replace(/,{2,}/g, ",") // Replace multiple consecutive commas with a single comma.
+              //   .replace(/,{2,}/g, "") // Replace multiple consecutive commas with a single comma.
               //   .replace(/(\s*,\s*)+/g, ", ") // Normalize spaces around commas.
               //   .replace(/(^|\n)\s*,/g, "$1") // Remove commas at the start of lines.
               //   .replace(/,\s*([.!?])/g, "$1") // Remove commas before periods, exclamation marks, or question marks.
