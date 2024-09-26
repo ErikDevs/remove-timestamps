@@ -147,14 +147,14 @@
               // Remove any HTML tags that might be present.
               cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
 
-              // // Remove double commas and misplaced commas.
-              // cleanedSection = cleanedSection
-              //   .replace(/,{2,}/g, "") // Replace multiple consecutive commas with a single comma.
-              //   .replace(/(\s*,\s*)+/g, ", ") // Normalize spaces around commas.
-              //   .replace(/(^|\n)\s*,/g, "$1") // Remove commas at the start of lines.
-              //   .replace(/,\s*([.!?])/g, "$1") // Remove commas before periods, exclamation marks, or question marks.
-              //   .replace(/,\s*$/, "") // Remove commas at the end of the text.
-              //   .replace(/\s*,\s*\n/g, "\n"); // Remove commas just before line breaks.
+              // Remove double commas and misplaced commas.
+              cleanedSection = cleanedSection
+                .replace(/,{2,}/g, "") // Replace multiple consecutive commas with a single comma.
+                .replace(/(\s*,\s*)+/g, ", ") // Normalize spaces around commas.
+                .replace(/(^|\n)\s*,/g, "$1") // Remove commas at the start of lines.
+                .replace(/,\s*([.!?])/g, "$1") // Remove commas before periods, exclamation marks, or question marks.
+                .replace(/,\s*$/, "") // Remove commas at the end of the text.
+                .replace(/\s*,\s*\n/g, "\n"); // Remove commas just before line breaks.
 
               // Remove commas directly after periods, exclamation marks, or question marks.
               cleanedSection = cleanedSection.replace(/([.!?])\s*,/g, "$1 ");
