@@ -142,11 +142,11 @@
                   .trim(); // Trim leading and trailing spaces.
               });
 
-              // // Replace repeated punctuation marks (e.g., "!!!" becomes "!").
-              // cleanedSection = cleanedSection.replace(/([.!?])\1+/g, "$1");
+              // Replace repeated punctuation marks (e.g., "!!!" becomes "!").
+              cleanedSection = cleanedSection.replace(/([.!?])\1+/g, "$1");
 
-              // // Remove any HTML tags that might be present.
-              // cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
+              // Remove any HTML tags that might be present.
+              cleanedSection = cleanedSection.replace(/<[^>]*>/g, "");
 
               // // Remove double commas and misplaced commas.
               // cleanedSection = cleanedSection
@@ -157,16 +157,16 @@
               //   .replace(/,\s*$/, "") // Remove commas at the end of the text.
               //   .replace(/\s*,\s*\n/g, "\n"); // Remove commas just before line breaks.
 
-              // // Remove commas directly after periods, exclamation marks, or question marks.
-              // cleanedSection = cleanedSection.replace(/([.!?])\s*,/g, "$1 ");
+              // Remove commas directly after periods, exclamation marks, or question marks.
+              cleanedSection = cleanedSection.replace(/([.!?])\s*,/g, "$1 ");
 
-              // // Ensure every new line starts with a capital letter.
-              // cleanedSection = cleanedSection.replace(
-              //   /(?:^|\n)(\s*)([a-z])/g, // Matches the start of a line or after a newline character.
-              //   (match, p1, p2) => {
-              //     return p1 + p2.toUpperCase(); // Capitalize the first letter after any whitespace.
-              //   }
-              // );
+              // Ensure every new line starts with a capital letter.
+              cleanedSection = cleanedSection.replace(
+                /(?:^|\n)(\s*)([a-z])/g, // Matches the start of a line or after a newline character.
+                (match, p1, p2) => {
+                  return p1 + p2.toUpperCase(); // Capitalize the first letter after any whitespace.
+                }
+              );
 
               // // Capitalize the first letter of any sentence after punctuation.
               // cleanedSection = cleanedSection.replace(
@@ -176,19 +176,19 @@
               //   }
               // );
 
-              // // Ensure there is a space after punctuation before a new word.
-              // cleanedSection = cleanedSection.replace(
-              //   /([.!?])\s*([a-zA-Z])/g,
-              //   "$1 $2"
-              // );
+              // Ensure there is a space after punctuation before a new word.
+              cleanedSection = cleanedSection.replace(
+                /([.!?])\s*([a-zA-Z])/g,
+                "$1 $2"
+              );
 
-              // // Capitalize the first letter of sentences after punctuation.
-              // cleanedSection = cleanedSection.replace(
-              //   /(?:^|[.!?]\s+)([a-z])/g,
-              //   (match, p1) => {
-              //     return match.replace(p1, p1.toUpperCase());
-              //   }
-              // );
+              // Capitalize the first letter of sentences after punctuation.
+              cleanedSection = cleanedSection.replace(
+                /(?:^|[.!?]\s+)([a-z])/g,
+                (match, p1) => {
+                  return match.replace(p1, p1.toUpperCase());
+                }
+              );
               return cleanedSection; // Return the cleaned section.
             });
 
