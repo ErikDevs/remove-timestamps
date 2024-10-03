@@ -154,10 +154,8 @@
                 .replace(/(^|\n)\s*,/g, "$1") // Remove commas at the start of lines.
                 .replace(/,\s*([.!?])/g, "$1") // Remove commas before periods, exclamation marks, or question marks.
                 .replace(/,\s*$/, "") // Remove commas at the end of the text.
-                .replace(/\s*,\s*\n/g, "\n"); // Remove commas just before line breaks.
-
-              // Remove commas directly after periods, exclamation marks, or question marks.
-              cleanedSection = cleanedSection.replace(/([.!?])\s*,/g, "$1 ");
+                .replace(/\s*,\s*\n/g, "\n")
+                .replace(/([.!?])\s*,/g, "$1");
 
               // Ensure every new line starts with a capital letter.
               cleanedSection = cleanedSection.replace(
@@ -222,14 +220,12 @@
         button.innerText = "Copy to Clipboard"; // Change button text to "Copy to Clipboard"
         button.disabled = false; // Re-enable the button
         button.onclick = copyText; // Change onclick event to copyText
-    } 
-}
-      function reloadPage() {
-            setTimeout(function() {
+        setTimeout(function() {
                 location.reload();
             }, 300000); 
-        }
-        window.onload = reloadPage;
+    } 
+}
+  
     </script>
   </body>
 </html>
